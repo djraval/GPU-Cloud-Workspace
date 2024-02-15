@@ -4,7 +4,8 @@ FROM nvidia/cuda:12.3.1-base-ubuntu22.04
 # Install necessary packages including rclone
 RUN apt-get update && apt-get install -y \
     curl \
-    fuse3 unzip \ 
+    fuse3 unzip \
+    tree \
     && curl https://rclone.org/install.sh | bash \
     && rm -rf /var/lib/apt/lists/*
 
@@ -24,10 +25,10 @@ COPY . .
 
 # Ensure the rclone config file is included in your project directory and copied
 # IMPORTANT: Make sure to add rclone.conf to your .dockerignore if it contains sensitive information
-COPY rclone.conf /root/.config/rclone/
+#COPY rclone.conf /root/.config/rclone/
 
 # Add a startup script
 COPY startup.sh /usr/src/app/
 RUN chmod +x /usr/src/app/startup.sh
 
-CMD ["/usr/src/app/startup.sh"]
+CMD ["/bin/bash", "-c", "/usr/src/app/startup.sh  2>&1 | tee /usr/src/app/startup.log"]

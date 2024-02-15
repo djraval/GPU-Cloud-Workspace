@@ -12,8 +12,19 @@ fi
 tailscaled &
 tailscale up --authkey $TAILSCALE_AUTHKEY --ssh
 
-# Mount rclone remotes
+# Create rclone config file from environment variable
 RCLONE_CONFIG_FILE=/root/.config/rclone/rclone.conf
+mkdir -p $(dirname $RCLONE_CONFIG_FILE)
+touch $RCLONE_CONFIG_FILE
+RCLONE_CONFIG_CONTENT=${RCLONE_CONFIG_CONTENT:-}
+if [[ -z "$RCLONE_CONFIG_CONTENT" ]]; then
+  echo "Error: RCLONE_CONFIG_CONTENT environment variable is not set."
+  exit   1
+else
+  echo "$RCLONE_CONFIG_CONTENT" | base64 --decode > $RCLONE_CONFIG_FILE
+fi
+
+# Mount rclone remotes
 while IFS= read -r line; do
   if [[ $line == \[*\] ]]; then
     dir=$(echo "$line" | tr -d '[]')
@@ -22,5 +33,16 @@ while IFS= read -r line; do
   fi
 done < $RCLONE_CONFIG_FILE
 
+# Everything is ready, Print stuff that was set
+# Tailscale status and IP
+tailscale status
+tailscale ip
+
+# Tree of 2 level deep of the rclone mounts
+tree -L 2 /mnt
+
+# Nvidia SMI
+nvidia-smi
+
 # Keep the container running (you might want to replace this with your actual application command)
-tail -f /dev/null   
+tail -f /dev/null 
