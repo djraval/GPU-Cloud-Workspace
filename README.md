@@ -33,7 +33,6 @@ This project sets up a Docker container equipped with NVIDIA CUDA, Rclone for cl
 - Docker installed on your machine.
 - A Tailscale account and an auth key.
 - Rclone configured for your cloud storage provider (SharePoint in this example).
-- **Important Note**: Ensure the CUDA version in the Dockerfile matches the CUDA version installed on your host machine. Mismatched versions can cause the build to fail.
 
 ### Setup
 
