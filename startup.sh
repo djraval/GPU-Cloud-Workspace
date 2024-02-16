@@ -8,8 +8,9 @@ if [[ -z "$TAILSCALE_AUTHKEY" ]]; then
   exit  1
 fi
 
-# Start TailScale with the provided auth key with ssh access
-tailscaled &
+# Start TailScale in userspace networking mode
+tailscaled --tun=userspace-networking --socks5-server=localhost:1055 &
+#tailscaled &
 tailscale up --authkey $TAILSCALE_AUTHKEY --ssh
 
 # Create rclone config file from environment variable
