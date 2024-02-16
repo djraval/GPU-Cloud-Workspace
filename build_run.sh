@@ -39,11 +39,12 @@ fi
 docker build -t $IMAGE_NAME "$BUILD_DIR"
 
 # Tag the image and then push it to the Docker Hub
+docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
 docker tag $IMAGE_NAME $DOCKER_HUB_USERNAME/$DOCKER_HUB_REPOSITORY:$TAG
 docker push $DOCKER_HUB_USERNAME/$DOCKER_HUB_REPOSITORY:$TAG
 
 # Construct the docker run command
-DOCKER_RUN_CMD="docker run --privileged --gpus all -d -e TAILSCALE_AUTHKEY=$TAILSCALE_AUTHKEY -e RCLONE_CONFIG_CONTENT=\"$RCLONE_CONFIG_CONTENT\" $DOCKER_HUB_USERNAME/$DOCKER_HUB_REPOSITORY:$TAG"
+DOCKER_RUN_CMD="docker run -d --gpus all -e TAILSCALE_AUTHKEY=$TAILSCALE_AUTHKEY -e RCLONE_CONFIG_CONTENT=\"$RCLONE_CONFIG_CONTENT\" $DOCKER_HUB_USERNAME/$DOCKER_HUB_REPOSITORY:$TAG"
 echo "Running the container with the following command:"
 echo $DOCKER_RUN_CMD
 
