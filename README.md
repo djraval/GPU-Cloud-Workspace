@@ -3,7 +3,7 @@
 
 # Remote Workspace with Docker, Rclone, and Tailscale
 
-This project sets up a Docker container equipped with NVIDIA CUDA, Rclone for cloud storage synchronization, and Tailscale for secure networking. It's designed to create a GPU-accelerated remote workspace with access to files stored on SharePoint via Rclone and secure network access through Tailscale.
+This project sets up a Docker container equipped with NVIDIA CUDA, Rclone for cloud storage synchronization, and Tailscale for secure networking. It's designed to create a GPU-accelerated remote workspace with access to files stored on SharePoint via Rclone and secure network access through Tailscale. This setup is mainly intended to facilitate remote work scenarios, such as data science and machine learning, where access to GPU resources and cloud storage is required. The primary focus would be on vast.ai, but later in the development, we can expand to other cloud providers.
 
 ## Features
 
@@ -43,12 +43,33 @@ This project sets up a Docker container equipped with NVIDIA CUDA, Rclone for cl
    cd remote-workspace
    ```
 
+2. **Rclone Configuration**
+
+   Place your `rclone.conf` file in the root directory. This file contains the configuration for your cloud storage provider, such as SharePoint. It's recommended to exclude this file from the repository by adding it to your `.gitignore` file.
+
+   If you haven't configured Rclone yet, you can do so by running the following command:
+
+   ```
+   rclone config
+   ```
+
+   This will guide you through the process of setting up Rclone for your cloud storage provider.
+   Once you've configured Rclone, use the command below to generate a base64-encoded string of your `rclone.conf` file:
+
+   ```
+   cat rclone.conf | base64
+   ```
+   and then add the output to your `.env` file as the value for `RCLONE_CONFIG_CONTENT`.
+
+   We use the base64-encoded string to avoid exposing the `rclone.conf` file in the repository andd allows us to use it as an environment variable in the Docker container.
+
 2. **Environment Variables**
 
    Create a `.env` file in the root directory with the following content, replacing `YOUR_TAILSCALE_AUTHKEY` with your actual Tailscale auth key:
 
    ```
    TAILSCALE_AUTHKEY=YOUR_TAILSCALE_AUTHKEY
+   RCLONE_CONFIG_CONTENT=<base64-encoded-rclone.conf>
    ```
 
 3. **Build and Run the Docker Container**
@@ -63,7 +84,7 @@ This project sets up a Docker container equipped with NVIDIA CUDA, Rclone for cl
 
 ### Dockerfile Explanation
 
-The Dockerfile is configured to use `nvidia/cuda:12.3.1-base-ubuntu22.04` as the base image. It's crucial that the CUDA version in this Dockerfile (`12.3.1` in this case) matches the CUDA version installed on your host machine to avoid compatibility issues during the build process.
+The Dockerfile is configured to use `nvidia/cuda:12.3.1-base-ubuntu22.04` as the base image. It's crucial that the CUDA version in this Dockerfile (`12.3.1` in this case) matches the CUDA version installed on your host machine to avoid compatibility issues during the container runtime.
 
 ### Usage
 
