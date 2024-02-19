@@ -28,7 +28,7 @@ COPY . .
 #COPY rclone.conf /root/.config/rclone/
 
 # Add a startup script
-COPY startup.sh /usr/src/app/
+COPY ./src/startup.sh /usr/src/app/
 RUN chmod +x /usr/src/app/startup.sh
 
 CMD ["/bin/bash", "-c", "/usr/src/app/startup.sh  2>&1 | tee /usr/src/app/startup.log"]
