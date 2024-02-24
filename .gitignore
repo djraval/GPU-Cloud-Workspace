@@ -1,3 +1,4 @@
 .env
 rclone.conf
 .vscode/settings.json
+.output.md
